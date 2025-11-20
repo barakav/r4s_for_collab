@@ -56,8 +56,7 @@ void allTrees::recursiveFind(	const sequenceContainer* sc,
 								const int maxIterations,
 								const MDOUBLE epsilon){
 	tree starT;
-	static vector<int> ids;
-	//ids.resize(0);
+	vector<int> ids;
 	get3seqTreeAndIdLeftVec(sc,starT,ids);
 	recursiveFind(starT,*sp,*sc,ids,weights,maxIterations,epsilon);
 }

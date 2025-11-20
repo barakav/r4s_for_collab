@@ -32,7 +32,7 @@ MDOUBLE brent(MDOUBLE ax, MDOUBLE bx, MDOUBLE cx, regF f, MDOUBLE tol,
 
     a=(ax < cx ? ax : cx);
     b=(ax > cx ? ax : cx);
-    x=w=v=bx;//why not during initialization
+    x=w=v=bx;
     fw=fv=fx=f(x);
     for (iter=1;iter<=ITMAX;iter++) {
 	xm=0.5*(a+b);
@@ -48,13 +48,11 @@ MDOUBLE brent(MDOUBLE ax, MDOUBLE bx, MDOUBLE cx, regF f, MDOUBLE tol,
 	    q=2.0*(q-r);
 	    if (q > 0.0) p = -p;
 	    q=fabs(q);
-	    etemp=e;//should be before the condition
+	    etemp=e;
 	    e=d;
-		//a-x and b-x should be entered into an array and to e before the upper if
 	    if (fabs(p) >= fabs(0.5*q*etemp) || p <= q*(a-x) || p >= q*(b-x))
-		d=CGOLD*(e=(x >= xm ? a-x : b-x));//e = arr[x >= xm] but before the blue if, e = d if not
-	    else {//only !
-			//e =d
+		d=CGOLD*(e=(x >= xm ? a-x : b-x));
+	    else {
 		d=p/q;
 		u=x+d;
 		if (u-a < tol2 || b-u < tol2)
@@ -125,7 +123,7 @@ MDOUBLE dbrent(MDOUBLE ax, MDOUBLE bx, MDOUBLE cx, regF f,
 	tol1=tol*fabs(x)+ZEPS;
 	tol2=2.0*tol1;
 
-	if (fabs(x-xm) <= (tol2-0.5*(b-a))) {//barak - there is another way of doing it
+	if (fabs(x-xm) <= (tol2-0.5*(b-a))) {
 	    *xmin=x;
 	    return fx;
 	}
@@ -140,56 +138,51 @@ MDOUBLE dbrent(MDOUBLE ax, MDOUBLE bx, MDOUBLE cx, regF f,
 	    ok2 = (a-u2)*(u2-b) > 0.0 && dx*d2 <= 0.0;
 	    olde=e;
 	    e=d;
-	    if (ok1 || ok2) { //barak - too many conditions
+	    if (ok1 || ok2) { 
 		if (ok1 && ok2)
 		    d=(fabs(d1) < fabs(d2) ? d1 : d2);
 		else if (ok1)
-		    d=d1;//barak put d in an array for branch prediction be more crafty:
-			     //all this large condition could turn into d = [ok1 && fabs(d1) < fabs(d2)] [d1,d2]
+		    d=d1;
 		else
 		    d=d2;
 		if (fabs(d) <= fabs(0.5*olde)) {
 		    u=x+d;
 		    if (u-a < tol2 || b-u < tol2)
 			d=SIGN(tol1,xm-x);
-		} else {//no need for all the elses goto is mondatory to jump after this line
+		} else {
 		    d=0.5*(e=(dx >= 0.0 ? a-x : b-x));
 		}
-	    } else { //no need for else
+	    } else {
 		d=0.5*(e=(dx >= 0.0 ? a-x : b-x));
 	    }
-	} else { //no need for else goto is mandatory
+	} else {
 	    d=0.5*(e=(dx >= 0.0 ? a-x : b-x));
 	}
-	//u = x then add even though the compiler is not stupid
-	//again array or goto may be cleaner
 	if (fabs(d) >= tol1) {
 	    u=x+d;
-	    fu=f(u);//should be outside the if 
+	    fu=f(u);
 	} else {
 	    u=x+SIGN(tol1,d); 
-	    if (u<ax) u=x; // MY LATEST ADDITION! barak : and he sucks 
-	    fu=f(u);		//replace those 3 lines with some form of else if (u +sign > ax)  u+=SIGN(tol1,d);  and u =x before the condition
-	    if (fu > fx) {//should be outside the if in else with the line above && a variable set above
+	    if (u<ax) u=x; // MY LATEST ADDITION!
+	    fu=f(u);
+	    if (fu > fx) {
 		*xmin=x;
 		return fx;
 	    }
 	}
-	//a = fu > fx 
 	du=df(u);
-	//should replace x and u with t, there could be drastic simplification
-	if (fu <= fx) {//this will decide if t is or u
-	    if (u >= x) a=x; else b=x;//you can compact the condition a,b array might be better
-	    MOV3(v,fv,dv, w,fw,dw)//simd? or memset?and use a function not a macro for better command cache utilization
-		MOV3(w,fw,dw, x,fx,dx)//simd
-		MOV3(x,fx,dx, u,fu,du)//simd?
+	if (fu <= fx) {
+	    if (u >= x) a=x; else b=x;
+	    MOV3(v,fv,dv, w,fw,dw)
+		MOV3(w,fw,dw, x,fx,dx)
+		MOV3(x,fx,dx, u,fu,du)
 		} else {
-		    if (u < x) a=u; else b=u; //again array will be faster...
+		    if (u < x) a=u; else b=u; 
 		    if (fu <= fw || w == x) {
-			MOV3(v,fv,dv, w,fw,dw)//simd  
-			    MOV3(w,fw,dw, u,fu,du)//simd
-			    } else if (fu < fv || v == x || v == w) {//wtf use a t again and this condition should come before the last
-				MOV3(v,fv,dv, u,fu,du)//simd
+			MOV3(v,fv,dv, w,fw,dw)
+			    MOV3(w,fw,dw, u,fu,du)
+			    } else if (fu < fv || v == x || v == w) {
+				MOV3(v,fv,dv, u,fu,du)
 				    }
 		}
 
@@ -202,7 +195,7 @@ MDOUBLE dbrent(MDOUBLE ax, MDOUBLE bx, MDOUBLE cx, regF f,
 //Using bisection, find the root of the function func known to lie between 
 x1 and x2. The return value is the root will be refined until its accuracy is +- xacc 
 */
-template <typename regF>//barak newton raphson?
+template <typename regF>
 MDOUBLE rtbis(regF func,MDOUBLE x1, MDOUBLE x2, MDOUBLE xacc) {
     const int max_number_of_iter = 100;
 	
@@ -226,7 +219,7 @@ MDOUBLE rtbis(regF func,MDOUBLE x1, MDOUBLE x2, MDOUBLE xacc) {
 
     for (int j=1; j <= max_number_of_iter; ++j) {
 	dx *= 0.5;
-	MDOUBLE xmid = rtb+dx;
+	MDOUBLE xmid = rtb+dx; 
 	MDOUBLE fmid = func(xmid);
 	if (fmid <= 0.0) rtb = xmid;
 	if ((fabs(dx) < xacc) || (fmid == 0.0)) return rtb;

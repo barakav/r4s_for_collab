@@ -29,14 +29,14 @@ void hky::changeTrTv(const MDOUBLE TrTv){
 }
 
 const MDOUBLE hky::Pij_t(const int i, const int j, const MDOUBLE t) const {
-	const MDOUBLE &pa = _freq[0];//barak -why all of it is not static? why 0-3 are not enumed?
+	const MDOUBLE &pa = _freq[0];
 	const MDOUBLE &pc = _freq[1];
 	const MDOUBLE &pg = _freq[2];
 	const MDOUBLE &pt = _freq[3];
 	const MDOUBLE py = pc+pt;
 	const MDOUBLE pr = pa+pg;
 
-	const MDOUBLE &b = _b;//why local? it is slower
+	const MDOUBLE &b = _b;
 	const MDOUBLE &a = _a;
 	const MDOUBLE lamda3 = -(py*b+pr*a);
 	const MDOUBLE lamda4 = -(py*a+pr*b);
@@ -45,8 +45,7 @@ const MDOUBLE hky::Pij_t(const int i, const int j, const MDOUBLE t) const {
 	MDOUBLE term2=0.0;
 	MDOUBLE term3=0.0;
 	MDOUBLE termAll=0.0;
-	switch (i) {//switch to an array of 2 functions and send _freq[i] instead of this switch
-				//use xor on the first bit to find the function index and
+	switch (i) {
 	case 0:
 		switch (j) {
 			case 0:

@@ -28,7 +28,7 @@ void computePijHomSpec::fillPij(const MDOUBLE dis,
 
 	  
 	for (j=i+1; j<sp.alphabetSize(); j++) {
-	  switch (derivationOrder) {//array of function pointers
+	  switch (derivationOrder) {
 	  case 0:
 		_V[i][j] = sp.Pij_t(i,j,dis);
 		break;
@@ -47,7 +47,7 @@ void computePijHomSpec::fillPij(const MDOUBLE dis,
 		//}
 		//_V[j][i] = 0.0;
 	  }
-	  else {//keep all the ratios
+	  else {
 		_V[j][i] = _V[i][j]*
 		  sp.freq(i)/sp.freq(j);
 	  }

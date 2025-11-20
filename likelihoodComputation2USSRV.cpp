@@ -52,10 +52,7 @@ MDOUBLE likelihoodComputation2USSRV::getTreeLikelihoodFromUp2(const tree& et,
 						const suffStatGlobalHom& cupSSRV,
 						VdoubleRep& posLike, // fill this vector with each position likelihood but without the weights.
 						const Vdouble * weights) {
-	int seqlen = sc.seqLen();
 	posLike.clear();
-	posLike.resize(seqlen);
-	//barak poslike.resize(seqlen)
 	MDOUBLE like = 0;
 	MDOUBLE f = model.getF();
 	//computing the likelihood from up:
@@ -64,8 +61,8 @@ MDOUBLE likelihoodComputation2USSRV::getTreeLikelihoodFromUp2(const tree& et,
 		
 		doubleRep tmp2 = 0; //like for the SSRV part
 		// SSRV
-		for (int let =0; let < model.getSSRVmodel().alphabetSize()/*too much dereferences*/; ++let) {
-				tmp2+=cupSSRV.get(pos,et.getRoot()->id(),let) * model.getSSRVmodel().freq(let);//barak prob some second order effects
+		for (int let =0; let < model.getSSRVmodel().alphabetSize(); ++let) {
+				tmp2+=cupSSRV.get(pos,et.getRoot()->id(),let) * model.getSSRVmodel().freq(let);
 		}
 		// Base model
 		for (int categor = 0; categor < model.noOfCategor(); ++categor) {
@@ -78,8 +75,8 @@ MDOUBLE likelihoodComputation2USSRV::getTreeLikelihoodFromUp2(const tree& et,
 
 		if(tmp<0.0) errorMsg::reportError("like< 0 in likelihoodComputation2USSRV::getTreeLikelihoodFromUp2");
 
-		like += log((1-f)*tmp+f*tmp2) * (weights?(*weights)[pos]:1);//barak do a single log for those with weight 1 in the end and only multiply the arguments that depends on weights though
-		posLike.push_back((1-f)*tmp+f*tmp2);//barak put in position instead of pushing like idiots
+		like += log((1-f)*tmp+f*tmp2) * (weights?(*weights)[pos]:1);
+		posLike.push_back((1-f)*tmp+f*tmp2);
 	}
 	return like;
 }

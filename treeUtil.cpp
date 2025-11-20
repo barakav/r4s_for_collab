@@ -9,7 +9,6 @@
 #include <map>
 using namespace std;
 
-//why the
 vector<tree> getStartingTreeVecFromFile(string fileName) {
 	vector<tree> vecT;
     ifstream in;

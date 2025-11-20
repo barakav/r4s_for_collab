@@ -166,11 +166,10 @@ const MDOUBLE pupAll::Pij_t(const int i, const int j, const MDOUBLE t) const {
 	}
 //	if ((_freq[i] == 0.0) || (_freq[j] == 0.0)) return 0.0;
 	MDOUBLE sum=0;
-	for (int k=0 ; k<20 ; ++k) {//multicore simD and sleef
+	for (int k=0 ; k<20 ; ++k) {
 		sum+=( _leftEigen[i][k]*_rightEigen[k][j]*exp(_eigenVector[k]*t) );
 	}
-	if (currectFloatingPointProblems(sum)) return sum; //order the sum for better results
-	//on general you just need to order the eignvalues
+	if (currectFloatingPointProblems(sum)) return sum; 
 //	LOG(1,<<"err Pij_t i="<<i<<" j= "<<j<<" dis= "<<t<<" res= "<<sum<<endl);//sum is not in [0,1]
 	errorMsg::reportError("error in function pijt... ");return 0;
 }
@@ -249,7 +248,7 @@ VVdouble fromWagSandFreqToQ(const VVdouble & s,const Vdouble& freq){
 	for (int z=0; z < q.size(); ++z) q[z].resize(s.size(),0.0);
 	int i,j;
 	MDOUBLE sum;
-	for ( i=0; i < s.size()/*fix*/; ++i) {
+	for ( i=0; i < s.size(); ++i) {
 		sum =0;
 		for (j=0; j < s.size(); ++j) {
 			if (i!=j) q[i][j] = s[i][j]* freq[j];

@@ -34,7 +34,7 @@ public:
 		void setDisToFather(const MDOUBLE dis) {_dis2father = dis;}
 		void setFather(TreeNode* tn){_father=tn;}
 		int getNumberOfSons() const {return _sons.size();}
-		TreeNode* getSon (int i) {return _sons[i];}//barak wtf 
+		TreeNode* getSon (int i) {return _sons[i];}
 		TreeNode* getLastSon () {return _sons.back();}
 		void removeLastSon() {_sons.pop_back();}
 		void removeSon(TreeNode* pSon);
@@ -68,7 +68,6 @@ public:
 		MDOUBLE _dis2father;
 	    string _comment;
 		friend class tree;
-
 	};
 //------------------------------------------------------------
 

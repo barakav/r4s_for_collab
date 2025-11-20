@@ -13,7 +13,7 @@ bblEMSeperate::bblEMSeperate(vector<tree>& et,
 									const MDOUBLE epsilon,
 									const MDOUBLE tollForPairwiseDist) {
 	MDOUBLE newL =0;
-	for (int i=0; i < et.size()/*fix*/; ++i) {
+	for (int i=0; i < et.size(); ++i) {
 		#ifdef VERBOS
 			LOG(5,<<" OPTIMIZING GENE "<<i<<" ... "<<endl);
 		#endif

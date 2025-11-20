@@ -29,7 +29,7 @@ MDOUBLE bblEM::compute_bblEM(
 	MDOUBLE oldL=VERYSMALL;
 	MDOUBLE currL = VERYSMALL;
 	tree oldT = _et;
-	for (int i=0; i < maxIterations; ++i) {//multithreading
+	for (int i=0; i < maxIterations; ++i) {
 		computeUp();
 		currL = likelihoodComputation::getTreeLikelihoodFromUp2(_et,_sc,_sp,_cup,_posLike,_weights);
 		//////////////

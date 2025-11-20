@@ -61,7 +61,7 @@ MDOUBLE inverseCDFBeta(MDOUBLE a, MDOUBLE b, MDOUBLE prob){
 	}
 	else {
 		if (chiSquare<0){
-			x=exp((log(b*(1-prob))+lnBetaVal)/b);//realley better than exp((log(b*(1-prob))+lnBetaVal)- log b)
+			x=exp((log(b*(1-prob))+lnBetaVal)/b);
 		}
 		else if (T<1){
 			x=exp((log(prob*a)+lnBetaVal)/a);

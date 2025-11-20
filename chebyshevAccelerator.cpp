@@ -90,11 +90,11 @@ void chebyshevAccelerator::chebft(Vdouble& c, int n, int from_aa, int to_aa) {
 	int k,j;
 	MDOUBLE fac,bpa,bma;
 
-	static Vdouble f;
+	Vdouble f;
 	f.resize(n);
 	bma=0.5*(_rightRange-_leftRange);
 	bpa=0.5*(_rightRange+_leftRange);
-	for (k=0;k<n;k++) {//multithreading
+	for (k=0;k<n;k++) {
 		MDOUBLE y=cos(3.141592653589793*(k+0.5)/n);
 		f[k]= _pb->Pij_t(from_aa,to_aa,y*bma+bpa); //(*func)(y*bma+bpa);
 	}
@@ -108,6 +108,7 @@ void chebyshevAccelerator::chebft(Vdouble& c, int n, int from_aa, int to_aa) {
 	
 }
 
+
 const MDOUBLE chebyshevAccelerator::Pij_t(const int from_aa, const int to_aa, const MDOUBLE x) const
 //----------------------------------------------------------------------------------
 //input:	like pij_t
@@ -119,23 +120,21 @@ const MDOUBLE chebyshevAccelerator::Pij_t(const int from_aa, const int to_aa, co
 	MDOUBLE d=0.0,dd=0.0,sv,y,y2,check;
 	int j;
 
-	if ((x-_leftRange)*(x-_rightRange) > 0.0) {//not sure that this is the best way
+	if ((x-_leftRange)*(x-_rightRange) > 0.0) {
 	return _pb->Pij_t(from_aa,to_aa,x);
 //		errorMsg::reportError("x not in range in routine fast_Pij_t");// also quit the program
 	}
 
-	y=(2.0*x-_leftRange-_rightRange)/(_rightRange-_leftRange);//consts?? calculate once at ctor
-
-	y2=2*y;
+	y2=2.0*(y=(2.0*x-_leftRange-_rightRange)/(_rightRange-_leftRange));
 	for (j=_usingNumberOfCoef;j>0;j--) {
 		sv=d;
-		d=y2*d-dd+chebi_coff[from_aa][to_aa][j];//you can jump more than one position at a time, without multiplying the amount of time
+		d=y2*d-dd+chebi_coff[from_aa][to_aa][j];
 		dd=sv;
 	}
-	check =  y*d-dd+0.5*chebi_coff[from_aa][to_aa][0]; 
+	check =  y*d-dd+0.5*chebi_coff[from_aa][to_aa][0];
 	if ((check>1) || (check<=0)) check = _pb->Pij_t(from_aa,to_aa,x);
-	assert((check<=1));//wtf???
-	assert(check>=0);//wtf??
+	assert(check<=1);
+	assert(check>=0);
 	return check;
 }
 

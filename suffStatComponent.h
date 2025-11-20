@@ -12,7 +12,7 @@ using namespace std;
 // hom = no rate variation. gam = with rate variation
 // pos = for one position
 //-------------------------------------------------------------
-class suffStatSpecHomPos{ // this is for a specific node. 
+class suffStatSpecHomPos{ // this is for a specific node.
 	public:
 		void set(const int letter,const doubleRep& val) {
 			_V[letter]=val;
@@ -36,7 +36,77 @@ class suffStatSpecHomPos{ // this is for a specific node.
 		vector<doubleRep> _V;//size = letter
 };
 //-------------------------------------------------------------
+/*
+class suffStatSpecGamPos{// this is for a specific node with rates
+	public:
+		void set(const int rateCategor,
+			const int letter,const MDOUBLE val) {
+			_V[rateCategor].set(letter,val);
+		}
+		
+		MDOUBLE get(const int rateCategor,
+			const int letter) const	{
+			return _V[rateCategor].get(letter);
+		}
+		void allocatePlace(const int numberOfrateCategories,const int alphabetSize) {
+			_V.resize(numberOfrateCategories);
+			for (int i=0; i < numberOfrateCategories; ++i) {
+				_V[i].allocatePlace(alphabetSize);
+			}
+		}
+		bool isEmpty (){return (_V.empty());};
+	private:
+		vector<suffStatSpecHomPos> _V;//rateCategor,letter
+};
+*/
+//-------------------------------------------------------------
+/*
+class suffStatSpecGam{// this is for a specific node with rates
+	public:
+		void set(const int pos,const int rateCategor,
+			const int letter,const MDOUBLE val) {
+			_V[pos].set(rateCategor,letter,val);
+		}
+		
+		MDOUBLE get(const int pos,const int rateCategor,
+			const int letter) const	{
+			return _V[pos].get(rateCategor,letter);
+		}
 
+		void allocatePlace(const int pos,const int numberOfrateCategories,const int alphabetSize) {
+			_V.resize(pos);
+			for (int i=0;i<pos;++i) _V[i].allocatePlace(numberOfrateCategories,alphabetSize);
+		}
+		bool isEmpty (){return (_V.empty());};
+		suffStatSpecGamPos& operator[] (int index) {return _V[index];}
+		const suffStatSpecGamPos& operator[] (int index) const {return _V[index];}
+	private:
+		vector<suffStatSpecGamPos> _V;//pos,rateCategor,letter
+};
+*/
+//-------------------------------------------------------------
+/*
+class suffStatGlobalGam {
+public:
+	MDOUBLE get(const int nodeId, const int pos,const int rateCategor,
+			const int letter) const	{
+		return _V[nodeId].get(pos,rateCategor,letter);
+	}
+	void allocatePlace(const int numOfNodes,
+						const int pos,
+						const int numberOfrateCategories,
+						const int alphabetSize) {
+		_V.resize(numOfNodes);
+		for (int i=0;i<numOfNodes;++i) _V[i].allocatePlace(pos,numberOfrateCategories,alphabetSize);
+	}
+	int size() const {return _V.size();}
+	suffStatSpecGam& operator[] (int index) {return _V[index];}
+	const suffStatSpecGam& operator[] (int index) const {return _V[index];}
+
+private:
+	vector<suffStatSpecGam> _V;
+};
+*/
 //-------------------------------------------------------------
 class suffStatGlobalHomPos{ // this is for all nodes
 	public:

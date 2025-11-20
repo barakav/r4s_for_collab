@@ -13,7 +13,6 @@ sequence::sequence(const string& str,
 				   const alphabet* inAlph)
 : _alphabet(inAlph->clone()), _remark(remark), _name(name),_id(id) 
 {
-	//barak - yes calling functions twice in the same loop
 	for (int k=0; k < str.size() ;k += _alphabet->stringSize()) {
 		int charId = inAlph->fromChar(str, k);
 		if (charId == -99) {

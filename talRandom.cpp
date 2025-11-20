@@ -27,7 +27,7 @@ MDOUBLE  talRandom::DblGammaGreaterThanOne(MDOUBLE dblAlpha) {
 	MDOUBLE  dblRand1;
 	MDOUBLE  dblRand2;
 	do
-	  {//might prefer to use random with no syscall
+	  {
 	    dblRand1 = giveRandomNumberBetweenZeroAndEntry(1.0);
 	    dblRand2 = giveRandomNumberBetweenZeroAndEntry(1.0);
 	    
@@ -53,10 +53,10 @@ MDOUBLE  talRandom::DblGammaLessThanOne(MDOUBLE dblAlpha){
 //unit scale and alpha < 1
 //reference: Ripley, Stochastic Simulation, p.88 
 	MDOUBLE dblTemp;
-	const MDOUBLE	dblexp = exp(1.0); //static should also not call this function at all imo
+	const MDOUBLE	dblexp = exp(1.0);
 	for (;;){
 		MDOUBLE dblRand0 = giveRandomNumberBetweenZeroAndEntry(1.0);
-		MDOUBLE dblRand1 = giveRandomNumberBetweenZeroAndEntry(1.0);//use a table
+		MDOUBLE dblRand1 = giveRandomNumberBetweenZeroAndEntry(1.0);
 		if (dblRand0 <= (dblexp / (dblAlpha + dblexp))){
 			dblTemp = pow(((dblAlpha + dblexp) * dblRand0) /
 			dblexp, 1.0 / dblAlpha);

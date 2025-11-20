@@ -399,8 +399,7 @@ void tree::makeSureAllBranchesAreLargerThanEpsilon(MDOUBLE epsilon) {
 //create new names to all internal nodes.
 //the new name will be NXX, where XX is htu number
 void tree::create_names_to_internal_nodes() {
-	static vector<nodeP> htuVec;
-	htuVec.resize(0);
+	vector<nodeP> htuVec;
 	getAllHTUs(htuVec,_root);
 
 	for (int i=0; i<htuVec.size(); ++i) {

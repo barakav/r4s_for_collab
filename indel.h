@@ -21,7 +21,7 @@ public:
 	int fromChar(const char s) const;
 	string fromInt(const int in_id) const;
 	vector<int> fromString(const string& str) const;
-	bool isSpecific(const int id) const {return (id>=0 && id < size()/*why? chanfe to unsigned*/);}
+	bool isSpecific(const int id) const {return (id>=0 && id < size());}
 
 };//end of class
 

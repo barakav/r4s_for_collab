@@ -52,7 +52,7 @@ const MDOUBLE uniformDistribution::getCumulativeProb(const MDOUBLE x) const
 	else if (x>= _upperBound)
 		return 1;
 	else
-		return ((x-_lowerBound) / (_upperBound - _lowerBound)/*save locally*/);
+		return ((x-_lowerBound) / (_upperBound - _lowerBound));
 }
 
 

@@ -9,14 +9,13 @@
 #include <errno.h>
 #include <string.h> //for strerror
 #include <stdlib.h>  //for exit()
-#include <typeinfo>
-ostream *errorMsg::_errorOut= nullptr ;
+ostream *errorMsg::_errorOut= NULL;
 
 void errorMsg::reportError(const vector<string>& textToPrint, const int exitCode) {
 	for (int i =0 ; i < textToPrint.size() ; ++i) {
 		LOG(1,<<textToPrint[i]<<endl);
 		cerr<<textToPrint[i]<<endl;
-		if (_errorOut != nullptr  &&  typeid(*_errorOut) !=  typeid(cerr))  {
+		if (_errorOut != NULL && _errorOut != &std::cerr)  {
 			(*_errorOut)<<textToPrint[i]<<endl;
 		}
 	}
@@ -31,7 +30,7 @@ void errorMsg::reportError(const vector<string>& textToPrint, const int exitCode
 void errorMsg::reportError(const string& textToPrint, const int exitCode) {
 	LOG(1,<<endl<<textToPrint<<endl);
 	cerr<<endl<<textToPrint<<endl;
-	if (_errorOut != nullptr  &&  typeid(*_errorOut) !=  typeid(cerr))  {
+	if (_errorOut != NULL && _errorOut != &std::cerr)  {
 		(*_errorOut)<<textToPrint<<endl;
 	}
 	if (errno!=0){

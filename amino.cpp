@@ -4,13 +4,10 @@
 
 //VVint amino::_relation;
 
-//barak - I hope this file is not imprtent it is beyond stupid
-
-// barak add skip amino acid and until you get 0 take an int- note the server endianess might play a role here 
 amino::amino() {
-	_relation.resize(24); 	// relation should realy be an allocted, two dimentional array, not a vector. ->barak- yes, they knew...
+	_relation.resize(24); 	// relation should realy be an allocted, two dimentional array, not a vector. 
 	for (int i=0; i < _relation.size(); ++i) { // this implementation would be much faster.  with some c-tricks, this checkup could be done with one access only.
-		_relation[i].resize(20);//barak:f c tricks use f memset, maybe with simd or at least combine those loops
+		_relation[i].resize(20);
 	}
 
 	for (int k=-2;k<=21;++k){
@@ -20,7 +17,6 @@ amino::amino() {
 	}
 }
 
-//barak wtf? use static lookup table, put in header
 int amino::fromChar(const char s) const{
 	switch (s) {
 	case 'A' : case'a' : return 0 ; break;
@@ -68,7 +64,6 @@ vector<int> amino::fromString(const string &str) const {
 	return vec;
 }
 
-//another lookup table
 string amino::fromInt(const int in_id) const{
   char res = 0;
 	switch (in_id) {
@@ -93,7 +88,7 @@ string amino::fromInt(const int in_id) const{
 		case 18: res = 'Y'  ; break;
 		case 19: res = 'V'  ; break;
 		case 20: res = 'B'  ; break;
-		case 21: res = 'Z'  ; break;//There is a check with is_valid if the number is bigger then 20 check this out
+		case 21: res = 'Z'  ; break;
 		case -1: res = '-'  ; break;
 		case -2: res = '*'  ; break;
 		case -3: res = '.'  ; break;
@@ -120,8 +115,6 @@ int amino::fromChar(const string& str, const int pos) const{
 	return fromChar(str[pos]);
 }
 
-
-//barak search an f an array if what you got is legal 1 not legal 0
 int amino::relations_internal(const int charInSeq, const int charToCheck) const{
 	if (charInSeq == charToCheck) return 1;
 	else if (charInSeq == fromChar('?')) return 1;
@@ -134,15 +127,15 @@ int amino::relations_internal(const int charInSeq, const int charToCheck) const{
 	return 0;
 }
 
-//barak - garbage, for example return pointers/references:
-vector<int> aminoUtility::codonOf(const int a/*amino index maybe?*/, codon &cod){
+
+vector<int> aminoUtility::codonOf(const int a, codon &cod){
 	vector<int> codons;
 	amino amin;
-	string strAmino=amin.fromInt(a);//why doing it like that? why not using static function??
+	string strAmino=amin.fromInt(a);
 	map <string, string> genCode=cod.geneticCode();
 	map <string, string>::iterator it=genCode.begin();
-	int tmp2=genCode.size();//terrible naming
-	while (it!=genCode.end()){//really? size-1
+	int tmp2=genCode.size();
+	while (it!=genCode.end()){
 		string tmp=(*it).second;
 		if ((*it).second==strAmino){
 			string strCodon=(*it).first;

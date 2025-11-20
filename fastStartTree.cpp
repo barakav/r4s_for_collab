@@ -23,7 +23,7 @@ vector<tree> eliminateHalf(vector<tree>& tVec,
 						   stochasticProcess& sp,
 						   ostream& out,
 						   const int maxIterEM){
-	vector<MDOUBLE> likeScore(tVec.size(),0.0);//static and resize keep the size locally
+	vector<MDOUBLE> likeScore(tVec.size(),0.0);
 	int i;
 	for (i=0; i < tVec.size(); ++i) {
 		bblEM bblEM1(tVec[i],orginal,sp,NULL,maxIterEM,0.01);

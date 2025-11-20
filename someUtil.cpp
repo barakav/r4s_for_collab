@@ -243,7 +243,7 @@ MDOUBLE string2double(const string& inString) {
 
 bool checkThatFileExist(const string& fileName) {
 	ifstream file1(fileName.c_str());
-	if (!file1.is_open()) return false;
+	if (!file1) return false;
 	file1.close();
 	return true;
 }
@@ -290,7 +290,7 @@ string* searchStringInFile(const string& string2find,
 						   const string& inFileName) {
 	ifstream f;
 	f.open(inFileName.c_str());
-	if (!f.is_open()) {
+	if (!f) {
 		string tmp = "Unable to open file name: "+inFileName+" in function searchStringInFile"; 
 		errorMsg::reportError(tmp);
 	}
@@ -317,7 +317,7 @@ string* searchStringInFile(const string& string2find,
 						   const string& inFileName) {// return the string that is AFTER the string to search.
 	ifstream f;
 	f.open(inFileName.c_str());
-	if (!f.is_open()) {
+	if (!f) {
 		string tmp = "Unable to open file name: "+inFileName+" in function searchStringInFile"; 
 		errorMsg::reportError(tmp);
 	}
@@ -341,7 +341,7 @@ string* searchStringInFile(const string& string2find,
 bool doesWordExistInFile(const string& string2find,const string& inFileName) {
 	ifstream f;
 	f.open(inFileName.c_str());
-	if (!f.is_open()) {
+	if (!f) {
 		string tmp = "Unable to open file name: "+inFileName+" in function searchStringInFile"; 
 		errorMsg::reportError(tmp);
 	}

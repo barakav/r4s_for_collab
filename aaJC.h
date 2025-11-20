@@ -22,13 +22,13 @@ public:
 //	virtual aaJC* clone() const { return new aaJC(*this); } 
 	const int alphabetSize() const {return 20;}
 
-	explicit aaJC(){};//barak why all of those are not const and set at prepearing function?? 
+	explicit aaJC(){};
 	const MDOUBLE Pij_t(const int i,const int j, const MDOUBLE d) const {
 //(wrong!)		return ((i==j) ?  0.05+0.95*exp(-20.0*d): 0.05-0.05*exp(-20.0*d));
 		return ((i==j) ?  aaDef::odAl+aaDef::om_odAl*exp(aaDef::m_alDiv_omalp*d): aaDef::odAl-aaDef::odAl*exp(aaDef::m_alDiv_omalp*d));
 
 	}
-//calculate once for each d by prepearing
+
 	const MDOUBLE dPij_dt(const int i,const int j, const MDOUBLE d) const{
 		//(worng!)return ((i==j) ?  -19.0*exp(-20.0*d): exp(-20.0*d));
 		return ((i==j) ?  -exp(aaDef::m_alDiv_omalp*d): exp(aaDef::m_alDiv_omalp*d)/(aaDef::Alp-1));

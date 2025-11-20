@@ -31,27 +31,8 @@ public:
 //		const MDOUBLE MAXDISTANCE=2.0;
 		const MDOUBLE MAXDISTANCE=15;
 		
-		MDOUBLE p = 0;//number of different bases/amino acids
-		MDOUBLE len = 0.0;//real len
-		MDOUBLE weight = 1.0;
-		int s1_seq_len = s1.seqLen();//s2 will be smarter
-	
-		for (int i = 0; i < s1_seq_len; ++i) {
-			if (s1[i]<0 || s2[i]<0) continue; //gaps and missing data. I assume that there are large areas of gaps and non gaps
-											  // this is why this should be first as it will benefit from branch prediction
-			//useless condition but CPU branch prediction will make the performance hit minimal
-			if (weights != NULL) {
-				weight = (*weights)[i];
-			}
-			len+=weight;
-			if (s1[i] != s2[i]) p+=weight;
-		}
-		if (len==0) p=1;
-		else p = p/len;
-		
-
-		//replace this shit
-		/*
+		MDOUBLE p =0;
+		MDOUBLE len=0.0;
 		if (weights == NULL) {
 			for (int i = 0; i < s1.seqLen() ; ++i) {
 				if (s1[i]<0 || s2[i]<0) continue; //gaps and missing data.
@@ -70,7 +51,7 @@ public:
 			else {
 				p = p/len;
 			}
-		}*/
+		}
 		const MDOUBLE inLog = 1 - (MDOUBLE)_alphabetSize*p/(_alphabetSize-1.0);
 		if (inLog<=0) {
 //			LOG(6,<<" DISTANCES FOR JC DISTANCE ARE TOO BIG");
@@ -98,30 +79,35 @@ public:
 	explicit jcDistanceOLD(const jcDistanceOLD& other) : _alphabetSize(other._alphabetSize) {
 	}
 	virtual jcDistanceOLD* clone() const{ return new jcDistanceOLD(*this);}
-//no gaps
+
 	const MDOUBLE giveDistance(	const sequence& s1,
 								const sequence& s2,
 								const vector<MDOUBLE>  * weights,
 								MDOUBLE* score=NULL) const {//score is not used here
-
+//		const MDOUBLE MAXDISTANCE=2.0;
 		const MDOUBLE MAXDISTANCE=15;
 		
 		MDOUBLE p =0;
 		MDOUBLE len=0.0;
-		int s1_seq_len = s1.seqLen();
-		MDOUBLE weight = 1.0;
-
-		for (int i = 0; i < s1_seq_len ; ++i) {
-			//useless condition but CPU branch prediction will make the performance hit minimal
-			if (weights != NULL) {
-				weight = (*weights)[i];
+		if (weights == NULL) {
+			for (int i = 0; i < s1.seqLen() ; ++i) {
+				//if (s1[i]<0 || s2[i]<0) continue; //gaps and missing data.
+				len+=1.0;
+				if (s1[i] != s2[i]) p++;
 			}
-			len+=weight;
-			if (s1[i] != s2[i]) p+=weight;
+			if (len==0) p=1;
+			else p = p/len;
+		} else {
+			for (int i = 0; i < s1.seqLen() ; ++i) {
+				//if (s1[i]<0 || s2[i]<0) continue; //gaps and missing data.
+				len += (*weights)[i];
+				if (s1[i] != s2[i])  p+=((*weights)[i]);
+			}
+			if (len==0) p=1;
+			else {
+				p = p/len;
+			}
 		}
-		if (len==0) p=1;
-		else p = p/len;
-
 		const MDOUBLE inLog = 1 - (MDOUBLE)_alphabetSize*p/(_alphabetSize-1.0);
 		if (inLog<=0) {
 //			LOG(6,<<" DISTANCES FOR JC DISTANCE ARE TOO BIG");

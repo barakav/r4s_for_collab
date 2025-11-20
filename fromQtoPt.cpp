@@ -102,14 +102,8 @@ const MDOUBLE q2pt::Pij_t(const int i, const int j, const MDOUBLE t) const {
 	if (t<0) errorMsg::reportError("negative length in routine Pij_t");
 //	if ((_freq[i] == 0.0) || (_freq[j] == 0.0)) return 0.0;
 	MDOUBLE sum=0;
-	int size = _eigenVector.size();
-	for (int k=0 ; k< size; ++k) {
-		//simT will work amazing here, cuda in particular...
-		sum+=( _leftEigen[i][k]*_rightEigen[k][j]*exp(_eigenVector[k]*t) );//summing after ordering by size to prevent annoying overflows when you transfer the mantissa to the exp
-																		 //multithreading
-																		 //decreasing by some log
-																		 //sleef is very efficient in exp
-		//maybe calculate exp(t) then multiply _eigenVector[k] times?
+	for (int k=0 ; k<_eigenVector.size() ; ++k) {
+		sum+=( _leftEigen[i][k]*_rightEigen[k][j]*exp(_eigenVector[k]*t) );
 	}
 	if (currectFloatingPointProblems(sum)) return sum; 
 //	LOG(1,<<"err Pij_t i="<<i<<" j= "<<j<<" dis= "<<t<<" res= "<<sum<<endl);//sum is not in [0,1]

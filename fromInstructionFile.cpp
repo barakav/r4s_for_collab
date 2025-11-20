@@ -33,7 +33,7 @@ using namespace std;
 void fromInstructionFile::readInstructionFile(const string& str){
 	ifstream f;
 	f.open(str.c_str());
-	if (f==NULL) {
+	if (!f) {
 	  string tmp = "Unable to open the instraction file : \""+str+"\""; 
 	  errorMsg::reportError(tmp);
 	}

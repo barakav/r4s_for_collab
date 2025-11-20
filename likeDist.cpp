@@ -37,39 +37,34 @@ MDOUBLE likeDist::evalLikelihoodForDistance(const stochasticProcess& sp,
 					    const vector<MDOUBLE>  * weights)  {
     MDOUBLE sumL=0.0; // sum of log likelihoods
     MDOUBLE posLikelihood = 0.0; // likelihood of a specific position
-    for (int pos=0; pos < s1.seqLen()/*barak - really?*/; ++pos){//multithreading
-		posLikelihood = 0.0;
-		if (s1.isUnknown(pos) && s2.isSpecific(pos)) { //maybe make a frequency 0 to unkown and skip and cancel this branching
-			// this is the more complicated case, where s1 = ?, s2 = specific
-			posLikelihood = sp.freq(s2[pos]);
-		} else if (s2.isUnknown(pos) && s1.isSpecific(pos)) {
-			posLikelihood = sp.freq(s1[pos]);
-			//the simple solution change the last 3 to if (unkown || unkown) just add the freq and put unkown at 0 do a lookup table
-			//add skip in case both zero
-		} else {
-			int num_categories = sp.categories();// barak - I probably changed that
-			for (int rateCategor = 0; rateCategor < num_categories; ++rateCategor) {
-				MDOUBLE rate = sp.rates(rateCategor);
-				MDOUBLE pij= 0.0;
-				if (s1.isSpecific(pos) && s2.isSpecific(pos)) {//simple case, where AA i is changing to AA j
-					pij= sp.Pij_t(s1[pos],s2[pos],dist*rate);
-					posLikelihood += pij * sp.freq(s1[pos])*sp.ratesProb(rateCategor);/*put in a local variable*/
-				} else {// this is the most complicated case, when you have
-					// combinations of letters, for example B in one
-					// sequence and ? in the other.
-					for (int iS1 =0; iS1< sp.alphabetSize()/*fix*/; ++iS1) {
-						for (int iS2 =0; iS2< sp.alphabetSize(); ++iS2) {
-							if ((s1.getAlphabet()->relations(s1[pos],iS1)) &&//funny but a bitmap  of true and false with relationXrelation can be used for better cache hit rate
-							(s2.getAlphabet()->relations(s2[pos],iS2))) {
-							//barak - you can make things more specific JC for example has tons of useless exp you can just multiply by num of amino acids Maybe use a trick here and rewrite the loop
-							//every specific accelarator has its own improvements chebysehev for example is crazy
-							//change to prepare pij and then use pij and it can be faster by a lot
-							posLikelihood += sp.freq(iS1)*sp.Pij_t(iS1,iS2,dist*rate)*sp.ratesProb(rateCategor);/*put in a local variable*/
-							}
-						}
-					}
-				}
-	   	 	} // end of for on the rates
+    for (int pos=0; pos < s1.seqLen(); ++pos){
+	if (s1.isUnknown(pos) && s2.isUnknown(pos)) continue; // the case of two unknowns
+	posLikelihood = 0.0;
+	if (s1.isUnknown(pos) && s2.isSpecific(pos)) { 
+	    // this is the more complicated case, where s1 = ?, s2 = specific
+	    posLikelihood = sp.freq(s2[pos]);
+	} else if (s2.isUnknown(pos) && s1.isSpecific(pos)) {
+	    posLikelihood = sp.freq(s1[pos]);
+	} else {
+	    for (int rateCategor = 0; rateCategor<sp.categories(); ++rateCategor) {
+		MDOUBLE rate = sp.rates(rateCategor);
+		MDOUBLE pij= 0.0;
+		if (s1.isSpecific(pos) && s2.isSpecific(pos)) {//simple case, where AA i is changing to AA j
+		    pij= sp.Pij_t(s1[pos],s2[pos],dist*rate);
+		    posLikelihood += pij * sp.freq(s1[pos])*sp.ratesProb(rateCategor);
+		} else {// this is the most complicated case, when you have
+		    // combinations of letters, for example B in one
+		    // sequence and ? in the other.
+		    for (int iS1 =0; iS1< sp.alphabetSize(); ++iS1) {
+			for (int iS2 =0; iS2< sp.alphabetSize(); ++iS2) {
+			    if ((s1.getAlphabet()->relations(s1[pos],iS1)) &&
+				(s2.getAlphabet()->relations(s2[pos],iS2))) {
+				posLikelihood += sp.freq(iS1)*sp.Pij_t(iS1,iS2,dist*rate)*sp.ratesProb(rateCategor);
+			    }
+			}
+		    }
+		}
+	    } // end of for on the rates
 	}
 	assert(posLikelihood!=0.0);
 	sumL += log(posLikelihood)*(weights ? (*weights)[pos]:1.0);
@@ -94,7 +89,6 @@ public:
 	MDOUBLE posLikelihood = 0.0; // likelihood of a specific position
 	MDOUBLE posLikelihood_d = 0.0; // derivative of the likelihood at a specific position
 	for (int pos=0; pos < _s1.seqLen(); ++pos){
-		//again replace the logic and likelihood for unkow and skip number
 	    if (_s1.isUnknown(pos) && _s2.isUnknown(pos)) continue; // the case of two unknowns
 	    posLikelihood = 0.0;
 	    posLikelihood_d = 0.0;
@@ -112,16 +106,16 @@ public:
 		    MDOUBLE dpij=0.0;
 		    if (_s1.isSpecific(pos) && _s2.isSpecific(pos)) {
 			//simple case, where AA i is changing to AA j
-			pij= _sp.Pij_t(_s1[pos],_s2[pos],dist*rate);//might be able to use some of the data by using prepare
+			pij= _sp.Pij_t(_s1[pos],_s2[pos],dist*rate);
 			dpij= _sp.dPij_dt(_s1[pos],_s2[pos],dist*rate)*rate;
-			MDOUBLE tmp =  _sp.freq(_s1[pos])*_sp.ratesProb(rateCategor);//barak - keep local
+			MDOUBLE tmp =  _sp.freq(_s1[pos])*_sp.ratesProb(rateCategor);
 			posLikelihood += pij *tmp;
 			posLikelihood_d += dpij*tmp;
 		    } else {// this is the most complicated case, when you have combinations of letters,
 			// for example B in one sequence and ? in the other.
 			for (int iS1 =0; iS1< _sp.alphabetSize(); ++iS1) {
 			    for (int iS2 =0; iS2< _sp.alphabetSize(); ++iS2) {
-				if ((_s1.getAlphabet()->relations(_s1[pos],iS1)) &&//again bitmap might be interesting cache wise
+				if ((_s1.getAlphabet()->relations(_s1[pos],iS1)) &&
 				    (_s2.getAlphabet()->relations(_s2[pos],iS2))) {
 				    MDOUBLE exp = _sp.freq(iS1)*_sp.ratesProb(rateCategor);
 				    posLikelihood += exp* _sp.Pij_t(iS1,iS2,dist*rate);

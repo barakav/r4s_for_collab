@@ -70,8 +70,8 @@ MDOUBLE allTreesSeparateModel::evalTree(	tree& et,
 							const MDOUBLE epsilon,
 							const vector<Vdouble* > * weights) {
 	MDOUBLE res = 0;
-	vector<tree> tVec;//static resize
-	for (int k=0; k < sc.size()/*awfull*/; ++k ) tVec.push_back(et);
+	vector<tree> tVec;
+	for (int k=0; k < sc.size(); ++k ) tVec.push_back(et);
 	bblEMSeperate bblemsep1(tVec,sc,sp,weights,maxIterations,epsilon);
 	res = bblemsep1.getTreeLikelihood();
 	_treeVecTmp = tVec;
